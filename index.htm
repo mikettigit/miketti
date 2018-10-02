@@ -1,0 +1,93 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+  		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+        <style>
+            .navimage_layer {
+                position: absolute;
+                margin: auto;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                right: 0;
+            }
+        </style>
+ 	</head>
+ 	<body> 
+		<p><img src="orig.png" id="back" class="navimage_layer"></p>
+        
+        <p><img src="orig.png" usemap="#map" id="navimg" class="navimage_layer"></p>
+		<p><map name="map"> 
+               <area shape="poly" img="v1-1.png" href="http://blinds.miketti.com" alt="Шторы" coords="314,1155, 362,1077, 506,909, 600,837, 656,873, 644, 924, 525,1100, 400,1200, 320,1180" target="_blank">
+               <area shape="poly" img="v1-2.png" href="http://acsoftware.narod.ru" alt="Софт" coords="42,625, 164,612, 460,645, 520,665, 530,662, 545,685, 540,700, 500,710, 333,730, 190,730, 110,716, 30,690, 2,668, 8,645" target="_blank">
+               <area shape="poly" img="v1-3.png" href="http://miketti.ru" alt="Сайты" coords="56,770, 290,745, 320,745, 345,740, 410,733, 535,740, 535,746, 553,761, 505,793, 394,830, 273,850, 120,845, 49,839, 26,813, 25,800" target="_blank">
+               <area shape="poly" img="v1-4.png" href="http://aceforked.livejournal.com" alt="ЖЖ" coords="693,1350, 665,1300, 660,1170, 696,940, 712,887, 730,877, 750,890, 775,990, 780,1110, 774,1230, 746,1330, 726,1350" target="_blank">
+  		</map></p>
+
+         <script>
+
+             function findSizes(el, src) {
+                 if (!el || !src) {
+                     return false;
+                 }
+                 else {
+                     var wGCS = window.getComputedStyle,
+                         pI = parseInt,
+                         dimensions = {};
+                     dimensions.actualWidth = pI(wGCS(el, null).width.replace('px', ''), 10);
+                     dimensions.originalWidth = 1406;
+                     return dimensions;
+                 }
+             }
+
+             function remap(imgElem) {
+                 if (!imgElem) {
+                     return false;
+                 }
+                 else {
+                     var mapName = imgElem
+                         .getAttribute('usemap')
+                         .substring(1),
+                         map = document.getElementsByName(mapName)[0],
+                         areas = map.getElementsByTagName('area'),
+                         imgSrc = imgElem.src,
+                         sizes = findSizes(imgElem, imgSrc),
+                         currentWidth = sizes.actualWidth,
+                         originalWidth = sizes.originalWidth,
+                         multiplier = currentWidth / originalWidth,
+                         newCoords;
+
+                     for (var i = 0, len = areas.length; i < len; i++) {
+                         newCoords = areas[i]
+                             .getAttribute('coords')
+                             .replace(/(\d+)/g, function (a) {
+                                 return Math.round(a * multiplier);
+                             });
+                         areas[i].setAttribute('coords', newCoords);
+                     }
+                 }
+             }
+
+             $(document).ready(function () {
+
+                 $(".navimage_layer").css("width", "30%");
+                 remap($("#navimg")[0]);
+
+                 $(window).resize(function() {
+                     document.location = document.location;
+                 })
+
+                 $("area").hover(
+                     function () {
+                         $("#navimg").attr("src", $(this).attr("img"));
+                     },
+                     function () {
+                         $("#navimg").attr("src", $("#back").attr("src"));
+                     }
+                 );
+             });
+
+         </script>
+	</body>
+</html>
